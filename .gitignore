@@ -1,0 +1,47 @@
+# Бинарные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Директория сборки Go
+/bin/
+/build/
+
+# Кэш Go
+/pkg/
+**/vendor/
+
+# Файлы зависимостей (если вы используете go modules, `go.sum` лучше оставить)
+go.work
+go.work.sum
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MacOS
+.DS_Store
+
+# Logs
+*.log
+
+# Тестовые результаты
+*.coverprofile
+*.testresult
+*.benchresult
+
+# Инструменты, вроде statik
+statik/
+
+# Генерируемый код
+gen/
+
+# Разное
+.env
+.env.*
