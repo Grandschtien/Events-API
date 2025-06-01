@@ -1,22 +1,20 @@
 package handlers
 
 import (
-	"events-api/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GetEvent(c *gin.Context) {
-	events := models.EventsTests // here we should retrieve data from DB
+func (h *Handlers) GetEvent(c *gin.Context) {
 	id := c.Param("id")
 
-	for _, event := range events {
-		if event.ID == id {
-			c.JSON(http.StatusOK, event)
-			return
-		}
+	event, err := h.DB.GetEvent(id)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+		return
 	}
 
-	c.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+	c.JSON(http.StatusOK, event)
 }

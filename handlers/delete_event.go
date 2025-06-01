@@ -1,22 +1,20 @@
 package handlers
 
 import (
-	"events-api/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func DeleteEvent(c *gin.Context) {
+func (h *Handlers) DeleteEvent(c *gin.Context) {
 	id := c.Param("id")
 
-	for i, val := range models.EventsTests {
-		if val.ID == id {
-			models.EventsTests = append(models.EventsTests[:i], models.EventsTests[i+1:]...)
-			c.JSON(http.StatusOK, gin.H{})
-			return
-		}
+	err := h.DB.DeleteEvent(id)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+		return
 	}
 
-	c.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+	c.JSON(http.StatusOK, gin.H{})
 }
