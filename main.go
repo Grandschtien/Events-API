@@ -1,6 +1,7 @@
 package main
 
 import (
+	"events-api/db"
 	"events-api/handlers"
 	"net/http"
 	"time"
@@ -10,6 +11,10 @@ import (
 
 func main() {
 	router := gin.Default()
+
+	postgress := db.Setup("events")
+
+	handlers := handlers.Handlers{DB: &db.DB{DB: postgress}}
 
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/event/:id", handlers.GetEvent)
