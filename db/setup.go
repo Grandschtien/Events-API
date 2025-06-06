@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -10,14 +11,16 @@ import (
 const (
 	host = "localhost"
 	port = 5432
-	user = "postgres"
 )
 
 func Setup(dbname string) *sql.DB {
+	password := os.Getenv("PSQLDBPASS")
+	user := os.Getenv("PSQLDBUSER")
+
 	info := fmt.Sprintf(
 		"host=%s port=%d user=%s "+
-			"dbname=%s sslmode=disable",
-		host, port, user, dbname)
+			"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", info)
 
