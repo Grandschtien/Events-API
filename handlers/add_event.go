@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"events-api/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func (h *Handlers) AddEvent(c *gin.Context) {
 		return
 	}
 
-	internalEvent := models.EventDAO{
+	internalEvent := models.Event{
 		UUID:        uuid.New().String(),
 		Title:       event.Title,
 		Description: event.Description,
@@ -26,6 +27,7 @@ func (h *Handlers) AddEvent(c *gin.Context) {
 	_, err := h.DB.SaveEvent(internalEvent)
 
 	if err != nil {
+		log.Printf("Database error: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal error with database"})
 		return
 	}

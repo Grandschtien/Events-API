@@ -12,13 +12,15 @@ import (
 func main() {
 	router := gin.Default()
 
-	postgress := db.Setup("events")
+	postgress := db.Setup("eventsdb")
 
 	handlers := handlers.Handlers{DB: &db.DB{DB: postgress}}
 
+	defer postgress.Close()
+
 	router.GET("/events", handlers.GetEvents)
-	router.GET("/event/:id", handlers.GetEvent)
-	router.DELETE("/events/:id", handlers.DeleteEvent)
+	router.GET("/event", handlers.GetEvent)
+	router.DELETE("/event", handlers.DeleteEvent)
 	router.POST("/event", handlers.AddEvent)
 
 	server := &http.Server{

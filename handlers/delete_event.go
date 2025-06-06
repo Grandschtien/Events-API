@@ -7,7 +7,11 @@ import (
 )
 
 func (h *Handlers) DeleteEvent(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "ID must be provided"})
+	}
 
 	err := h.DB.DeleteEvent(id)
 
@@ -16,5 +20,5 @@ func (h *Handlers) DeleteEvent(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
 }
