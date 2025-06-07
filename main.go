@@ -12,11 +12,15 @@ import (
 func main() {
 	router := gin.Default()
 
-	postgress := db.Setup("eventsdb")
+	err, postgres := db.SetupEventDB()
 
-	handlers := handlers.Handlers{DB: &db.DB{DB: postgress}}
+	if err != nil {
+		panic("DB did not initialize")
+	}
 
-	defer postgress.Close()
+	handlers := handlers.Handlers{DB: postgres}
+
+	defer postgres.Close()
 
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/event", handlers.GetEvent)
