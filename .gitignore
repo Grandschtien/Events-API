@@ -43,5 +43,6 @@ statik/
 gen/
 
 # Разное
+config/
 .env
 .env.*

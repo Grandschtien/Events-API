@@ -32,7 +32,7 @@ export let options = {
   },
 };
 
-const baseURL = 'http://localhost:8080';
+const baseURL = 'https://localhost:8080';
 
 /**
  * setup(): создает тестовое событие и сохраняет список всех uuid,
