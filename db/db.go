@@ -88,10 +88,19 @@ func (db *DB) SaveEvent(event models.Event) (int64, error) {
 }
 
 func (db *DB) DeleteEvent(uuid string) error {
-	_, err := db.deleteEvent.Exec(uuid)
+	result, err := db.deleteEvent.Exec(uuid)
 
 	if err != nil {
 		return fmt.Errorf("failed to delete event: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("event with UUID %s does not exist", uuid)
 	}
 
 	return nil
