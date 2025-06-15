@@ -2,8 +2,10 @@ package main
 
 import (
 	"crypto/tls"
-	"events-api/db"
-	"events-api/handlers"
+	authHandlers "events-api/authentication/handlers"
+	"events-api/core/db"
+	eventHandlers "events-api/events/handlers"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,9 +24,11 @@ func main() {
 
 	router := gin.Default()
 
-	err, postgres := db.SetupEventDB()
+	err, eventDB := db.SetupEventDB()
+	err, usersDB := db.SetupUserDB()
 
 	if err != nil {
+		fmt.Println(err.Error())
 		panic("DB did not initialize")
 	}
 
@@ -36,14 +40,24 @@ func main() {
 		log.Fatalf("Failed to load certificates: %v", err)
 	}
 
-	handlers := handlers.Handlers{DB: postgres}
+	handlers := eventHandlers.EventHandlers{DB: eventDB}
 
-	defer postgres.Close()
+	defer eventDB.Close()
+	defer usersDB.Close()
 
+	// Setup events handlers
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/event", handlers.GetEvent)
 	router.DELETE("/event", handlers.DeleteEvent)
 	router.POST("/event", handlers.AddEvent)
+
+	// Setup auth handlers
+	authGroup := router.Group("/auth")
+
+	authHandlers := authHandlers.AuthHandlers{DB: usersDB}
+
+	authGroup.GET("/login", authHandlers.LoginUser)
+	authGroup.POST("/registration", authHandlers.RegisterUser)
 
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},

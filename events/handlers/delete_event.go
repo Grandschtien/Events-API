@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handlers) DeleteEvent(c *gin.Context) {
+func (h *EventHandlers) DeleteEvent(c *gin.Context) {
 	id := c.Query("id")
 
 	if id == "" {

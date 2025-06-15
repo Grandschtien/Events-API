@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handlers) GetEvent(c *gin.Context) {
+func (h *EventHandlers) GetEvent(c *gin.Context) {
 	id := c.Query("id")
 
 	if id == "" {

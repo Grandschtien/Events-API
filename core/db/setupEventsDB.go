@@ -2,26 +2,22 @@ package db
 
 import (
 	"database/sql"
+	"events-api/core/utils"
 	"fmt"
 	"os"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	host = "localhost"
-	port = 5432
-)
-
 func SetupEventDB() (error, *DB) {
-	password := os.Getenv("PSQLDBPASS")
-	user := os.Getenv("PSQLDBUSER")
 	dbname := "eventsdb"
+	var DBName = os.Getenv("PSQLDBUSER")
+	var DBPassword = os.Getenv("PSQLDBPASS")
 
 	info := fmt.Sprintf(
 		"host=%s port=%d user=%s "+
 			"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		utils.Host, utils.Port, DBName, DBPassword, dbname)
 
 	db, err := sql.Open("postgres", info)
 
@@ -33,20 +29,19 @@ func SetupEventDB() (error, *DB) {
 	if err != nil {
 		return err, nil
 	}
-
-	insertEvent := prepareEvent(
+	insertEvent := utils.PrepareEvent(
 		db,
 		"INSERT INTO public.events (uuid, title, description, date) VALUES ($1, $2, $3, $4) RETURNING id",
 	)
-	getAllEvent := prepareEvent(
+	getAllEvent := utils.PrepareEvent(
 		db,
 		"SELECT * FROM public.events",
 	)
-	getByUUIDEvent := prepareEvent(
+	getByUUIDEvent := utils.PrepareEvent(
 		db,
 		"SELECT * FROM public.events WHERE uuid = $1",
 	)
-	deleteEvent := prepareEvent(
+	deleteEvent := utils.PrepareEvent(
 		db,
 		"DELETE FROM public.events WHERE uuid = $1",
 	)
@@ -60,19 +55,4 @@ func SetupEventDB() (error, *DB) {
 		getEventWithId: getByUUIDEvent,
 		deleteEvent:    deleteEvent,
 	}
-}
-
-func prepareEvent(
-	conn *sql.DB,
-	operation string,
-) *sql.Stmt {
-	stmt, err := conn.Prepare(
-		operation,
-	)
-
-	if err != nil {
-		panic("Operation did not prepare")
-	}
-
-	return stmt
 }

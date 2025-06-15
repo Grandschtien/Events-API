@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"events-api/models"
+	"events-api/events/models"
 	"fmt"
 )
 

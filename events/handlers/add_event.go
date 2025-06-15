@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"events-api/models"
+	"events-api/events/models"
 	"log"
 	"net/http"
 
@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *Handlers) AddEvent(c *gin.Context) {
+func (h *EventHandlers) AddEvent(c *gin.Context) {
 	var event *models.EventAdd
 
 	if err := c.BindJSON(&event); err != nil {
