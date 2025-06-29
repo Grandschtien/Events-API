@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	authHandlers "events-api/authentication/handlers"
+	"events-api/authentication/middleware"
 	"events-api/core/db"
 	eventHandlers "events-api/events/handlers"
 	"fmt"
@@ -48,8 +49,8 @@ func main() {
 	// Setup events handlers
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/event", handlers.GetEvent)
-	router.DELETE("/event", handlers.DeleteEvent)
-	router.POST("/event", handlers.AddEvent)
+	router.Use(middleware.AuthMiddleware()).DELETE("/event", handlers.DeleteEvent)
+	router.Use(middleware.AuthMiddleware()).POST("/event", handlers.AddEvent)
 
 	// Setup auth handlers
 	authGroup := router.Group("/auth")
