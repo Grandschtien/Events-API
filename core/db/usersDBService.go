@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"events-api/authentication/models"
+	"fmt"
 )
 
 type UsersDB struct {
@@ -22,8 +24,16 @@ func (db *UsersDB) SaveUser(tx *sql.Tx, username string, password string) (int, 
 	return id, nil
 }
 
-func (db *UsersDB) GetUser(userId uint64) (string, error) {
-	return "nil", nil
+func (db *UsersDB) GetUser(username string) (models.LoginUserDAO, error) {
+	var user models.LoginUserDAO
+
+	row := db.selectStmt.QueryRow(username)
+
+	if err := row.Scan(&user.ID, &user.Username, &user.Password, &user.CrearedAt); err != nil {
+		return models.LoginUserDAO{}, fmt.Errorf("internal error: %w", err)
+	}
+
+	return user, nil
 }
 
 func (db *UsersDB) Close() error {
