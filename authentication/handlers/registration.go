@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"events-api/authentication/models"
-	"events-api/authentication/utils"
+	"events-api/core/utils"
 	"log"
 	"net/http"
 

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"events-api/authentication/utils"
+	"events-api/core/utils"
 	"net/http"
 	"strings"
 

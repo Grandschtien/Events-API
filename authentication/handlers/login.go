@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"events-api/authentication/models"
-	"events-api/authentication/utils"
+	"events-api/core/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
