@@ -7,4 +7,5 @@ const (
 	Port = 5432
 )
 
-const refreshTTL = 30 * 24 * time.Hour
+const AccessTokenRefreshTTL = 24 * time.Hour
+const RefreshTokenRefreshTTL = 30 * 24 * time.Hour

@@ -1,6 +1,6 @@
 package handlers
 
-import "events-api/core/db"
+import db "events-api/core/db/eventsDB"
 
 type EventHandlers struct {
 	DB *db.DB

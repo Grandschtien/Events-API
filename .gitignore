@@ -46,3 +46,4 @@ gen/
 keys/
 .env
 .env.*
+config/

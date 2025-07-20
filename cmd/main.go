@@ -4,7 +4,9 @@ import (
 	"crypto/tls"
 	authHandlers "events-api/authentication/handlers"
 	"events-api/authentication/middleware"
-	"events-api/core/db"
+	refreshTokensDB "events-api/core/db/RefreshTokensDB"
+	eventsDB "events-api/core/db/eventsDB"
+	usersDB "events-api/core/db/usersDB"
 	eventHandlers "events-api/events/handlers"
 	"fmt"
 	"log"
@@ -16,8 +18,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// TODO: add endpoint to update refresh token
+
 func main() {
-	err := godotenv.Load("config/.env")
+	err := godotenv.Load("../config/.env")
 
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
@@ -25,8 +29,9 @@ func main() {
 
 	router := gin.Default()
 
-	err, eventDB := db.SetupEventDB()
-	err, usersDB := db.SetupUserDB()
+	err, eventDBSetup := eventsDB.SetupEventDB()
+	err, usersDBSetup := usersDB.SetupUserDB()
+	err, refreshTokensDBSetup := refreshTokensDB.SetupRefreshTokensDB()
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -41,24 +46,31 @@ func main() {
 		log.Fatalf("Failed to load certificates: %v", err)
 	}
 
-	handlers := eventHandlers.EventHandlers{DB: eventDB}
+	handlers := eventHandlers.EventHandlers{DB: eventDBSetup}
 
-	defer eventDB.Close()
-	defer usersDB.Close()
+	defer eventDBSetup.Close()
+	defer usersDBSetup.Close()
+	defer refreshTokensDBSetup.Close()
 
 	// Setup events handlers
 	router.GET("/events", handlers.GetEvents)
 	router.GET("/event", handlers.GetEvent)
-	router.Use(middleware.AuthMiddleware()).DELETE("/event", handlers.DeleteEvent)
-	router.Use(middleware.AuthMiddleware()).POST("/event", handlers.AddEvent)
+
+	authRequired := router.Group("/")
+	authRequired.Use(middleware.AuthMiddleware()).DELETE("/event", handlers.DeleteEvent)
+	authRequired.Use(middleware.AuthMiddleware()).POST("/event", handlers.AddEvent)
 
 	// Setup auth handlers
 	authGroup := router.Group("/auth")
 
-	authHandlers := authHandlers.AuthHandlers{DB: usersDB}
+	authHandlers := authHandlers.AuthHandlers{
+		UsersDB:         usersDBSetup,
+		RefreshTokensDB: refreshTokensDBSetup,
+	}
 
 	authGroup.GET("/login", authHandlers.LoginUser)
 	authGroup.POST("/registration", authHandlers.RegisterUser)
+	authGroup.POST("/refresh", authHandlers.RefreshToken)
 
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},

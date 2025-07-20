@@ -1,5 +1,5 @@
 CREATE TABLE refresh_tokens (
-  id           UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  id SERIAL PRIMARY KEY,
   user_id      INTEGER     NOT NULL REFERENCES users(id),
   token_hash   TEXT        NOT NULL UNIQUE,
   issued_at    TIMESTAMPTZ NOT NULL DEFAULT now(),

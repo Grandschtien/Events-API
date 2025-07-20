@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"events-api/core/utils"
+	"events-api/authentication/utils"
 	"net/http"
 	"strings"
 
@@ -40,7 +40,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		mapClaims, ok := claims.(jwt.MapClaims)
 
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authentication token claims"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authentication token"})
 			c.Abort()
 			return
 		}

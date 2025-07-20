@@ -1,7 +1,11 @@
 package handlers
 
-import "events-api/core/db"
+import (
+	refreshTokens "events-api/core/db/RefreshTokensDB"
+	users "events-api/core/db/usersDB"
+)
 
 type AuthHandlers struct {
-	DB *db.UsersDB
+	UsersDB         *users.UsersDB
+	RefreshTokensDB *refreshTokens.RefreshTokensDB
 }

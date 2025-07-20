@@ -17,6 +17,11 @@ func (h *EventHandlers) AddEvent(c *gin.Context) {
 		return
 	}
 
+	if len(event.Title) == 0 {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Title required"})
+		return
+	}
+
 	internalEvent := models.Event{
 		UUID:        uuid.New().String(),
 		Title:       event.Title,

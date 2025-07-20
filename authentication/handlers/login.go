@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"events-api/authentication/models"
-	"events-api/core/utils"
+	"events-api/authentication/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ func (h *AuthHandlers) LoginUser(context *gin.Context) {
 		return
 	}
 
-	userDAO, err := h.DB.GetUser(user.Username)
+	userDAO, err := h.UsersDB.GetUser(user.Username)
 
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"message": "User is not registered"})
@@ -30,12 +30,29 @@ func (h *AuthHandlers) LoginUser(context *gin.Context) {
 		return
 	}
 
-	token, tokenGenerationError := utils.GenerateToken(uint(userDAO.ID))
+	accessToken, accessTokenGenerationError := utils.GenerateToken(uint(userDAO.ID))
 
-	if tokenGenerationError != nil {
+	if accessTokenGenerationError != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"token": token})
+	refreshToken, refreshTokenGenerationError := utils.GenerateRefreshToken(32)
+
+	if refreshTokenGenerationError != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	saveRefreshTokenError := h.RefreshTokensDB.SaveRefreshToken(userDAO.ID, refreshToken)
+
+	if saveRefreshTokenError != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	})
 }
