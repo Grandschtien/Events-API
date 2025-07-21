@@ -33,26 +33,30 @@ func (h *AuthHandlers) LoginUser(context *gin.Context) {
 	accessToken, accessTokenGenerationError := utils.GenerateToken(uint(userDAO.ID))
 
 	if accessTokenGenerationError != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		utils.CommonInternalErrorResponse(context)
 		return
 	}
 
 	refreshToken, refreshTokenGenerationError := utils.GenerateRefreshToken(32)
 
 	if refreshTokenGenerationError != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		utils.CommonInternalErrorResponse(context)
+		return
+	}
+
+	revokeTokensError := h.RefreshTokensDB.RevokeRefreshToken(userDAO.ID, true)
+
+	if revokeTokensError != nil {
+		utils.CommonInternalErrorResponse(context)
 		return
 	}
 
 	saveRefreshTokenError := h.RefreshTokensDB.SaveRefreshToken(userDAO.ID, refreshToken)
 
 	if saveRefreshTokenError != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
+		utils.CommonInternalErrorResponse(context)
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
+	utils.CommonTokenOKResponse(context, userDAO.ID, accessToken, refreshToken)
 }

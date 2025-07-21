@@ -78,8 +78,5 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
+	utils.CommonTokenOKResponse(context, id, accessToken, refreshToken)
 }

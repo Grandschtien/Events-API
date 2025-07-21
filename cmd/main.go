@@ -70,7 +70,7 @@ func main() {
 
 	authGroup.GET("/login", authHandlers.LoginUser)
 	authGroup.POST("/registration", authHandlers.RegisterUser)
-	authGroup.POST("/refresh", authHandlers.RefreshToken)
+	authGroup.GET("/refresh", authHandlers.RefreshToken)
 
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},

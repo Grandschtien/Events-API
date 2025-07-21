@@ -8,9 +8,10 @@ import (
 )
 
 type RefreshTokensDB struct {
-	DB         *sql.DB
-	insertStmt *sql.Stmt
-	selectStmt *sql.Stmt
+	DB              *sql.DB
+	insertStmt      *sql.Stmt
+	selectStmt      *sql.Stmt
+	revokeTokenStmt *sql.Stmt
 }
 
 func (db *RefreshTokensDB) Close() error {
@@ -45,13 +46,20 @@ func SetupRefreshTokensDB() (error, *RefreshTokensDB) {
 	)
 	selectStmt := utils.PrepareEvent(
 		db,
-		"SELECT * FROM public.refresh_tokens WHERE user_id = $1",
+		"SELECT * FROM public.refresh_tokens WHERE user_id = $1 AND revoked = $2",
 	)
+
+	revokeStmt := utils.PrepareEvent(
+		db,
+		"UPDATE public.refresh_tokens SET revoked = $1 WHERE user_id = $2",
+	)
+
 	fmt.Println("Successfully connected!")
 
 	return nil, &RefreshTokensDB{
-		DB:         db,
-		insertStmt: insertStmt,
-		selectStmt: selectStmt,
+		DB:              db,
+		insertStmt:      insertStmt,
+		selectStmt:      selectStmt,
+		revokeTokenStmt: revokeStmt,
 	}
 }
