@@ -1,4 +1,4 @@
-Pet project in Golang.
+# Pet project in Golang.
 - REST API
 - Postres
 - Gin
