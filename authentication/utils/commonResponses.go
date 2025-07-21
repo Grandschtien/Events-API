@@ -13,7 +13,3 @@ func CommonTokenOKResponse(context *gin.Context, userID int, accessToken string,
 		"refresh_token": refreshToken,
 	})
 }
-
-func CommonInternalErrorResponse(context *gin.Context) {
-	context.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
-}

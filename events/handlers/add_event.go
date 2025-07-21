@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	coreUtils "events-api/core/utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -33,7 +35,7 @@ func (h *EventHandlers) AddEvent(c *gin.Context) {
 
 	if err != nil {
 		log.Printf("Database error: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal error with database"})
+		coreUtils.CommonInternalErrorResponse(c)
 		return
 	}
 

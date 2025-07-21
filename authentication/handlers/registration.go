@@ -4,6 +4,7 @@ import (
 	"errors"
 	"events-api/authentication/models"
 	"events-api/authentication/utils"
+	coreUtils "events-api/core/utils"
 	"log"
 	"net/http"
 
@@ -25,7 +26,7 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error of hashing password %v", err)
-		context.JSON(500, gin.H{"error": "internal error"})
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
@@ -33,7 +34,7 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 
 	if err != nil {
 		log.Printf("Error on transaction creation %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
@@ -48,7 +49,7 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 			return
 		}
 		log.Printf("Error during saving of user: %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
@@ -58,7 +59,7 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 
 	if accessTokenGenerationError != nil {
 		log.Printf("Error while generating access token %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
@@ -66,7 +67,7 @@ func (h *AuthHandlers) RegisterUser(context *gin.Context) {
 
 	if refreshTokenGenerationError != nil {
 		log.Printf("Error while generating refresh token %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 

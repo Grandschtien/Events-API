@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
+	coreUtils "events-api/core/utils"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +25,7 @@ func (h *EventHandlers) GetEvent(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Internal error"})
+		coreUtils.CommonInternalErrorResponse(c)
 		return
 	}
 

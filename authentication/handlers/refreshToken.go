@@ -3,6 +3,7 @@ package handlers
 import (
 	"events-api/authentication/models"
 	"events-api/authentication/utils"
+	coreUtils "events-api/core/utils"
 	"net/http"
 	"time"
 
@@ -20,7 +21,7 @@ func (hander *AuthHandlers) RefreshToken(context *gin.Context) {
 	err, tokens := hander.RefreshTokensDB.GetRefreshTokens(token.UserID)
 
 	if err != nil {
-		utils.CommonInternalErrorResponse(context)
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
@@ -56,7 +57,7 @@ func (hander *AuthHandlers) RefreshToken(context *gin.Context) {
 	newAccessToken, tokenGenerationError := utils.GenerateToken(uint(token.UserID))
 
 	if tokenGenerationError != nil {
-		utils.CommonInternalErrorResponse(context)
+		coreUtils.CommonInternalErrorResponse(context)
 		return
 	}
 
